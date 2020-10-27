@@ -94,9 +94,13 @@ public class CursorController : MonoBehaviour {
 #endif
 
         // 可変コマンド(たたかう、アイテム以外)初期化
-        for (int index = 2; index < Command.Count; index++) {
-            Command[index].GetComponent<Text>().text = "";
+        for (int index = 1; index < Command.Count; index++) {
 
+            if (index == 3) continue;
+
+            // アイテム以外初期化
+            Command[index].GetComponent<Text>().text = "";
+            
             // 有効コマンド設定
             if (ActiveCommandList.Count != 0) {
                 Command[index].GetComponent<Text>().text = ActiveCommandList.Dequeue();
