@@ -4,8 +4,9 @@
 - Z：決定
 
 # デモ
-[![キャプチャ](https://user-images.githubusercontent.com/3638785/97151866-71c12400-17b3-11eb-85d5-f1a28d317562.PNG)
-](https://little-hoge.github.io/SelectCursor/)
+[CursorSelectSample](https://little-hoge.github.io/SelectCursorSample/)
+
+<img src="https://user-images.githubusercontent.com/3638785/97255617-5eb26080-1854-11eb-949d-dcca758ec4c1.gif" width=50%>
 
 # ソース
 [Source](https://github.com/little-hoge/SelectCursor/blob/main/Assets/CursorController.cs)
