@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,13 +15,11 @@ public class CursorController : MonoBehaviour {
 
     Vector2Int CursorPoint;
     Queue<string> ActiveCommandList = new Queue<string>();
-    const float DefaultPosX = -290;
-    const float DefaultPosY = -25;
-    const float OffsetX = 300;
-    const float OffsetY = 100;
+    const float OffsetX = 160;
+    const float OffsetY = 10;
     const int CommandUpDownMax = 4;
     const int CommandLeftRightMax = 2;
-     
+
 
     private void Start() {
         var CommandField = GameObject.Find("CommandField").transform;
@@ -34,8 +33,8 @@ public class CursorController : MonoBehaviour {
         foreach (Transform child in ToggleField) {
             Toggle.Add(child);
         }
+       
     }
-
 
     void Update() {
         Vector3 pos = Cursor.localPosition;
@@ -44,25 +43,28 @@ public class CursorController : MonoBehaviour {
             SelectText.text = Command[CursorPoint.x + CursorPoint.y].GetComponent<Text>().text + "を選択";
         }
         if (Input.GetKeyDown(KeyCode.UpArrow)) {
-
             for (; cmdActiveFlag != true;) {
                 CursorPoint.y = (CursorPoint.y + (CommandUpDownMax - 1)) % CommandUpDownMax;
-                pos.y = DefaultPosY - OffsetY * CursorPoint.y;
+                pos.x = Command[CursorPoint.x + CursorPoint.y].localPosition.x - OffsetX;
+                pos.y = Command[CursorPoint.x + CursorPoint.y].localPosition.y + OffsetY;
                 cmdActiveFlag = IsCommandName(CursorPoint.y + CursorPoint.x);
+
             }
         }
         if (Input.GetKeyDown(KeyCode.DownArrow)) {
             for (; cmdActiveFlag != true;) {
                 CursorPoint.y = (CursorPoint.y + 1) % CommandUpDownMax;
-                pos.y = DefaultPosY - OffsetY * CursorPoint.y;
+                pos.x = Command[CursorPoint.x + CursorPoint.y].localPosition.x - OffsetX;
+                pos.y = Command[CursorPoint.x + CursorPoint.y].localPosition.y + OffsetY;
                 cmdActiveFlag = IsCommandName(CursorPoint.y + CursorPoint.x);
+
             }
         }
         if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.LeftArrow)) {
             for (; cmdActiveFlag != true;) {
                 CursorPoint.x = (CursorPoint.x + CommandUpDownMax) % (CommandUpDownMax * CommandLeftRightMax);
-                if (CursorPoint.x < CommandUpDownMax) pos.x = DefaultPosX;
-                else pos.x = DefaultPosX + OffsetX;
+                pos.x = Command[CursorPoint.x + CursorPoint.y].localPosition.x - OffsetX;
+                pos.y = Command[CursorPoint.x + CursorPoint.y].localPosition.y + OffsetY;
                 cmdActiveFlag = IsCommandName(CursorPoint.y + CursorPoint.x);
             }
         }
@@ -93,14 +95,24 @@ public class CursorController : MonoBehaviour {
         Debug.Log(string.Join(", ", ActiveCommandList));
 #endif
 
-        // 可変コマンド(たたかう、アイテム以外)初期化
-        for (int index = 1; index < Command.Count; index++) {
+        // アイテム表示非表示
+        if (ActiveCommandList.Contains("アイテム")) {
+            ActiveCommandList = new Queue<string>(ActiveCommandList.Where(x => x != "アイテム"));
+            Command[3].GetComponent<Text>().text = "アイテム";
+        }
+        else {
+            Command[3].GetComponent<Text>().text = "";
+        }
 
+        // 可変コマンド(たたかう、アイテム以外)初期化 ※-1カーソル分
+        for (int index = 1; index < Command.Count-1; index++) {
+
+            // アイテム処理なし
             if (index == 3) continue;
 
             // アイテム以外初期化
             Command[index].GetComponent<Text>().text = "";
-            
+
             // 有効コマンド設定
             if (ActiveCommandList.Count != 0) {
                 Command[index].GetComponent<Text>().text = ActiveCommandList.Dequeue();
